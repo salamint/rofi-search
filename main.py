@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import shutil
 import subprocess
 import sys
 from argparse import ArgumentParser, Namespace
@@ -11,7 +12,7 @@ from typing import Optional, Iterable
 
 from browser import Browser
 from cli import arguments
-from config import Configuration, ConfigLocation, GlobalConfigParser
+from config import Configuration, ConfigLocation, GlobalConfigParser, APP_XDG_CONFIG_DIR, APP_DOT_DIR, XDG_CONFIG_DIR
 from search_engine import SearchEngine
 
 DEFAULT_ENCODING = "utf-8"
@@ -74,8 +75,6 @@ class Application:
                 return self.select_search_engine()
             case 12:
                 self.toggle_privacy()
-                # TODO
-                print("toggled privacy")
                 return self.handle_return_code(current_menu, current_menu)
             case 13:
                 return self.select_language()
@@ -185,6 +184,27 @@ def print_browsers() -> 'ExitCode':
     return ExitCode.SUCCESS
 
 
+def copy_default_config(destination: Path) -> 'ExitCode':
+    source = Path(os.path.dirname(__file__))
+    if destination.exists() and destination.is_file():
+        backup = destination.with_suffix(".old.toml")
+        shutil.move(destination, backup)
+        print(f"Backed up previous config file to {backup}.")
+    shutil.copy(source / "default.toml", destination)
+    print(f"Initial config file created at {destination}.")
+    return ExitCode.SUCCESS
+
+
+def make_init_config() -> 'ExitCode':
+    if XDG_CONFIG_DIR.exists() and XDG_CONFIG_DIR.is_dir():
+        if not APP_XDG_CONFIG_DIR.exists() or not APP_XDG_CONFIG_DIR.is_dir():
+            APP_XDG_CONFIG_DIR.mkdir()
+        return copy_default_config(APP_XDG_CONFIG_DIR / "config.toml")
+    if APP_DOT_DIR.exists() and APP_DOT_DIR.is_dir():
+        APP_DOT_DIR.mkdir()
+    return copy_default_config(APP_DOT_DIR / "config.toml")
+
+
 def load_config(args: 'Namespace') -> 'Configuration':
     config = Configuration(debug=args.debug)
 
@@ -203,13 +223,15 @@ def load_config(args: 'Namespace') -> 'Configuration':
     return config
 
 
-def main(parser: ArgumentParser) -> ExitCode:
+def main(parser: 'ArgumentParser') -> 'ExitCode':
     args, unknown = parser.parse_known_args()
     if len(unknown) != 0:
         print(f"Unknown parameters: {unknown}", file=sys.stderr)
 
     if args.list_browsers:
         return print_browsers()
+    elif args.make_init_config:
+        return make_init_config()
 
     config = load_config(args)
     app = Application(config)

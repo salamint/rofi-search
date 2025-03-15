@@ -1,0 +1,100 @@
+# This is  configuration file example.
+# When creating a default configuration in the user's directory,
+# this file will be copied to the corresponding location.
+# It is recommended to only edit copies of this file,
+# as there are no replacement.
+# Every setting here is commented, and their values are the defaults.
+
+[main]
+# Set the preferred language/locale.
+# This must be a 2 characters string representing a country code.
+lang = "en"
+
+# Enable private search by default.
+# Private search can always be toggled at any time when using the search bar.
+private_search = false
+
+# List of paths to other configuration files.
+# Will load them in the order you give, previous configuration will be overriden.
+# Redondant or circular imports are blocked, so you don't have to worry about it.
+sources = []
+
+[browsers]
+# Ordered list of preferred browsers (overrides user default).
+# If the first browser is not installed (available), it will try to use the next one.
+# Must be a list of executable names, as they identify the browser.
+preferred = []
+
+# Show private browsers only in the browser list.
+# This setting is not checked for browsers in the "show" list.
+# It has one of the lowest priorities.
+private_only = false
+
+# Hides every browser based on one of the given browsers from the browser selection menu.
+# This is overriden by "preferred", but overrides "private_only".
+hide_based_on = []
+
+# Shows every installed browser based on one of the given browsers
+# from the browser selection menu.
+# This does not override "private_only".
+show_based_on = []
+
+# Hides the given list of browsers in the browser selection menu.
+# Even if the browser is installed and respects the "private_only" criteria,
+# and overrides "show_based_on".
+# Exceptionnaly, browsers in the "preferred" list are still shown.
+hide = []
+
+# Shows the given list of browsers in the browser selection menu.
+# Overrides "private_only" and "hide_based_on", but will only show installed browsers.
+show = []
+
+[search_engines]
+# Sets the default search engine to use.
+default = "DuckDuckGo"
+
+# Only show private search engines in the search engine selection list.
+private_only = false
+
+# Hides the following search engines from the selection menu.
+hide = []
+
+# Shows the following search engines from the selection menu,
+# overrding "private_only".
+show = []
+
+[customization]
+# Please note that the keybindings are managed by rofi.
+# If the program fails to start, try executing it from a terminal in debug mode
+# and see what happens.
+# I am not responsible for what keybinding are available, instead edit your rofi configuration.
+# To learn how to write keybindings that rofi can read :
+# https://davatorium.github.io/rofi/current/rofi-keys.5/
+
+# Changes the default keybinding to open the browser selection menu.
+#kb_browsers = "<your keybinding here>"
+# Changes the default keybinding to open the language selection menu.
+#kb_change_language = "<your keybinding here>"
+# Changes the default keybinding to open the search engine selection menu.
+#kb_search_engines = "<your keybinding here>"
+# Changes the default keybinding to toggle private search.
+#kb_toggle_private_search = "<your keybinding here>"
+
+# Sets the width in percentage of the search window.
+# This overrides your current rofi theme style.
+width = 50
+
+
+# Example on how to add support to a browser or edit a browser configuration.
+#[browser.brave]                            # Arbitrary name, should be unique in your config file.
+#name = "brave"                             # Executable name, will be used to open your browser, make sure it is on path.
+#arguments = ["--abc", "-x", "-y", "z"]     # List of command line arguments to pass before the URL.
+#private = true                             # Tag the browser as private, i.e. respects your privacy.
+#base = "chromium"                          # Leave empty or do not set if your browser is not based on any other browser.
+
+# Example on how to add support to a search engine or edit a search engine configuration.
+#[search_engine.yahoo]                          # Arbitrary name, must be unique in your config file.
+#name = "Yahoo!"                                # Display name.
+#url = "https://{lang}.search.yahoo.com/search" # URL to use for the search engine. The search is a GET request.
+#private = false                                # Tag the search engine as private, i.e. respects your privacy.
+#escape = true                                  # If the search engine needs to escape the terms or not (e.g. The Wayback Machine)

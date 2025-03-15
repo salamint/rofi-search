@@ -12,12 +12,6 @@ class ConfigLocation:
             if location.is_valid():
                 return location
 
-    @classmethod
-    def standard(cls, path: Path) -> 'ConfigLocation':
-        location = cls(path)
-        cls.standard_locations.append(location)
-        return location
-
     def __init__(self, path: Path):
         self.path = path.resolve()
 
@@ -53,10 +47,10 @@ class ConfigLocation:
 HOME_DIR = Path.home()
 XDG_CONFIG_DIR = HOME_DIR / ".config"
 
-APP_XDG_CONFIG_DIR = ConfigLocation.standard(XDG_CONFIG_DIR / "rofi-search/")
-APP_XDG_CONFIG_FILE = ConfigLocation.standard(XDG_CONFIG_DIR / "rofi-search.toml")
-APP_DOT_DIR = ConfigLocation.standard(HOME_DIR / ".rofi-search/")
-APP_DOT_FILE = ConfigLocation.standard(HOME_DIR / ".rofi-search.toml")
+APP_XDG_CONFIG_DIR = XDG_CONFIG_DIR / "rofi-search/"
+APP_XDG_CONFIG_FILE = XDG_CONFIG_DIR / "rofi-search.toml"
+APP_DOT_DIR = HOME_DIR / ".rofi-search/"
+APP_DOT_FILE = HOME_DIR / ".rofi-search.toml"
 
 
 class ConfigurationLocationException(Exception):
