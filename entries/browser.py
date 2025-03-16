@@ -21,10 +21,12 @@ import subprocess
 from shutil import which
 from typing import Optional
 
-from search_engine import SearchEngine
+
+from .entry import Entry
+from .search_engine import SearchEngine
 
 
-class Browser:
+class Browser(Entry):
     """
     Class describing a browser as an executable.
     Its name is referring to the executable's name,
@@ -51,8 +53,13 @@ class Browser:
         cls.all[name] = obj
         return obj
 
-    def __init__(self, name: str, arguments: Optional[list[str]] = None, private: bool = False, base: Optional['Browser'] = None, search_engine: Optional['SearchEngine'] = None, private_arguments: Optional[list[str]] = None):
-        self.name = name
+    def __init__(self, name: str, executable: str, aliases: Optional[list[str]] = None, arguments: Optional[list[str]] = None, private: bool = False, base: Optional['Browser'] = None, search_engine: Optional['SearchEngine'] = None, private_arguments: Optional[list[str]] = None):
+        super().__init__(name, executable, aliases)
+        lower_name = self.name.lower()
+        if lower_name not in self.aliases:
+            self.aliases.insert(0, lower_name)
+        if executable not in self.aliases:
+            self.aliases.insert(0, executable)
         self.arguments = arguments if arguments is not None else []
         self.private = private
         self.base = base
@@ -64,8 +71,8 @@ class Browser:
         based_on_string = f", based on {self.get_base().get_name()}" if self.get_base() is not None else ""
         return f'<{self.__class__.__name__} "{self.get_name()}"{private_string}{based_on_string}>'
 
-    def get_name(self) -> str:
-        return self.name
+    def get_executable(self) -> str:
+        return self.utility
 
     def get_arguments(self) -> list[str]:
         return self.arguments
@@ -91,26 +98,26 @@ class Browser:
         return command
 
     def spawn(self, url: str, private: bool = False):
-        return subprocess.run(self.get_command(url))
+        return subprocess.run(self.get_command(url, private=private))
 
 
 class BrowserException(Exception):
     pass
 
 
-CHROMIUM = Browser("chromium", [])
-FIREFOX = Browser("firefox", private_arguments=["--private-window"])
+CHROMIUM = Browser("Chromium", "chromium")
+FIREFOX = Browser("Firefox", "firefox", private_arguments=["--private-window"])
 
-BRAVE = Browser("brave", [], private=True, base=CHROMIUM)
-CHROME = Browser("chrome", [], base=CHROMIUM)
-FLOORP = Browser("floorp", [], private=True, base=FIREFOX)
-ICECAT = Browser("icecat", [], private=True, base=FIREFOX)
-LIBREWOLF = Browser("librewolf", [], private=True, base=FIREFOX, private_arguments=["--private-window"])
-OPERA = Browser("opera", [], base=CHROMIUM)
-PALEMOON = Browser("palemoon", [], private=True, base=FIREFOX)
-QUTEBROWSER = Browser("qutebrowser", [], base=CHROMIUM, private_arguments=["--target", "private-window"])
-TOR = Browser("tor", [], base=FIREFOX)
-UNGOOGLED_CHROMIUM = Browser("ungoogled_chromium", [], private=True, base=CHROMIUM)
-VIVALDI = Browser("vivaldi", [], base=CHROMIUM)
-WATERFOX = Browser("waterfox", [], private=True, base=FIREFOX)
-ZEN = Browser("zen-browser", [], private=True, base=FIREFOX)
+BRAVE = Browser("Brave", "brave", private=True, base=CHROMIUM)
+CHROME = Browser("Chrome", "chrome", base=CHROMIUM)
+FLOORP = Browser("Floorp", "floorp", private=True, base=FIREFOX, private_arguments=["--private-window"])
+ICECAT = Browser("Ice Cat", "icecat", private=True, base=FIREFOX)
+LIBREWOLF = Browser("Librewolf", "librewolf", private=True, base=FIREFOX, private_arguments=["--private-window"])
+OPERA = Browser("Opera", "opera", base=CHROMIUM)
+PALEMOON = Browser("Palemoon", "palemoon", [], private=True, base=FIREFOX)
+QUTEBROWSER = Browser("qutebrowser", "qutebrowser", base=CHROMIUM, private_arguments=["--target", "private-window"])
+TOR = Browser("Tor", "tor", base=FIREFOX, private=True)
+UNGOOGLED_CHROMIUM = Browser("Ungoogled Chromium", "ungoogled_chromium", private=True, base=CHROMIUM)
+VIVALDI = Browser("Vivaldi", "vivaldi", base=CHROMIUM)
+WATERFOX = Browser("Waterfox", "waterfox", private=True, base=FIREFOX, private_arguments=["--private-window"])
+ZEN = Browser("Zen", "zen-browser", private=True, base=FIREFOX)

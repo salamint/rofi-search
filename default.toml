@@ -71,6 +71,10 @@ show = []
 # To learn how to write keybindings that rofi can read :
 # https://davatorium.github.io/rofi/current/rofi-keys.5/
 
+# Color to use to display aliases next to the browser/search engine's name.
+# This must be set in the config file or through the cli because it uses pango.
+#aliases_color = "#444444"
+
 # Changes the default keybinding to open the browser selection menu.
 #kb_browsers = "<your keybinding here>"
 # Changes the default keybinding to open the language selection menu.
@@ -80,21 +84,28 @@ show = []
 # Changes the default keybinding to toggle private search.
 #kb_toggle_private_search = "<your keybinding here>"
 
+# Path to an alternative configuration file than the default.
+rofi_config = ""
+
 # Sets the width in percentage of the search window.
 # This overrides your current rofi theme style.
 width = 50
 
 
 # Example on how to add support to a browser or edit a browser configuration.
-#[browser.brave]                            # Arbitrary name, should be unique in your config file.
-#name = "brave"                             # Executable name, will be used to open your browser, make sure it is on path.
-#arguments = ["--abc", "-x", "-y", "z"]     # List of command line arguments to pass before the URL.
-#private = true                             # Tag the browser as private, i.e. respects your privacy.
-#base = "chromium"                          # Leave empty or do not set if your browser is not based on any other browser.
+#[browser.brave]                        # Arbitrary name, should be unique in your config file.
+#name = "Brave"                         # Display name
+#executable = "brave"                   # Executable name, will be used to spawn your browser, make sure it is on path.
+#aliases = ["b", "brv"]                 # List of aliases to simplify search.
+#arguments = ["--abc", "-xyz"]          # List of command line arguments to pass before the URL.
+#private_arguments = ["--private-tab"]  # List of command line arguments to add to make a private search.
+#private = true                         # Tag the browser as private, i.e. respects your privacy.
+#base = "chromium"                      # Leave empty or do not set if your browser is not based on any other browser.
 
 # Example on how to add support to a search engine or edit a search engine configuration.
 #[search_engine.yahoo]                          # Arbitrary name, must be unique in your config file.
 #name = "Yahoo!"                                # Display name.
+#aliases = ["yh", "yah"]                        # List of aliases to simplify search.
 #url = "https://{lang}.search.yahoo.com/search" # URL to use for the search engine. The search is a GET request.
 #private = false                                # Tag the search engine as private, i.e. respects your privacy.
 #escape = true                                  # If the search engine needs to escape the terms or not (e.g. The Wayback Machine)

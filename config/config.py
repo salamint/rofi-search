@@ -3,9 +3,10 @@ from argparse import Namespace
 from pathlib import Path
 from typing import Optional
 
-from browser import Browser, FIREFOX, BrowserException
-from search_engine import SearchEngine, DUCKDUCKGO, SearchEngineException
+from entries.browser import Browser, FIREFOX, BrowserException
+from entries.search_engine import SearchEngine, DUCKDUCKGO, SearchEngineException
 
+DEFAULT_ALIASES_COLOR = "#444444"
 DEFAULT_LANGUAGE = 'en'
 DEFAULT_SEARCH_ENGINE = DUCKDUCKGO
 
@@ -41,7 +42,7 @@ class Configuration:
         self.customization = CustomizationConfig()
 
     def __str__(self) -> str:
-        return f'{self.__class__.__name__}(lang="{self.main.get_language()}", browser="{self.browsers.get_browser().get_name()}", search_engine="{self.get_search_engine().get_name()}")'
+        return f'{self.__class__.__name__}(lang="{self.main.get_language()}", browser="{self.browsers.get_browser().get_name()}", search_engine="{self.search_engines.get_search_engine().get_name()}")'
 
     def has_loaded(self, file: Path) -> bool:
         return file in self.files
@@ -198,11 +199,18 @@ class SearchEngineConfiguration:
 class CustomizationConfig:
 
     def __init__(self):
+        self.aliases_color: Optional[str] = None
         self.kb_browsers: Optional[str] = None
         self.kb_change_language: Optional[str] = None
         self.kb_search_engine: Optional[str] = None
         self.kb_toggle_private: Optional[str] = None
+        self.rofi_config: Optional[str] = None
         self.width = 50
+
+    def get_aliases_color(self) -> str:
+        if self.aliases_color is None:
+            return DEFAULT_ALIASES_COLOR
+        return self.aliases_color
 
     def get_kb_browsers(self) -> Optional[str]:
         return self.kb_browsers
@@ -212,6 +220,9 @@ class CustomizationConfig:
 
     def get_kb_toggle_private(self) -> Optional[str]:
         return self.kb_toggle_private
+
+    def get_rofi_config(self) -> Optional[str]:
+        return self.rofi_config
 
     def get_width(self) -> int:
         return self.width

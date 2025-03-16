@@ -21,14 +21,17 @@ Please feel free to request any search engine that you would
 like to see supported.
 """
 import re
+from typing import Optional
 from urllib import parse
+
+from .entry import Entry
 
 DEFAULT_SEARCH_FIELD = 'q'
 
 NEEDS_LANGUAGE_REGEX = re.compile(r"^http(s)+://.*(?P<hole>\{lang}).*$")
 
 
-class SearchEngine:
+class SearchEngine(Entry):
 
     all: dict[str, 'SearchEngine'] = {}
 
@@ -37,9 +40,11 @@ class SearchEngine:
         cls.all[name] = obj
         return obj
 
-    def __init__(self, name: str, url: str, private: bool = False, field: str | None = None, escape: bool = True):
-        self.name = name
-        self.url = url
+    def __init__(self, name: str, url: str, aliases: Optional[list[str]] = None, private: bool = False, field: Optional[str] = None, escape: bool = True):
+        super().__init__(name, url, aliases)
+        lower_name = self.name.lower()
+        if lower_name not in self.aliases:
+            self.aliases.insert(0, lower_name)
         self.private = private
         if field is None:
             self.field = DEFAULT_SEARCH_FIELD
@@ -51,16 +56,13 @@ class SearchEngine:
         private_string = ", private" if self.is_private() else ""
         return f'<{self.__class__.__name__} "{self.get_name()}"{private_string}, url="{self.get_url()}">'
 
-    def get_name(self) -> str:
-        return self.name
-
     def get_url(self) -> str:
-        return self.url
+        return self.utility
 
     def is_private(self) -> bool:
         return self.private
 
-    def search(self, terms: str, lang: str) -> str:
+    def format_url(self, terms: str, lang: str) -> str:
         if len(terms) == 0:
             return self.get_url()
 
@@ -92,4 +94,4 @@ STARTPAGE = SearchEngine("Startpage", "https://www.startpage.com/search", privat
 SWISSCOWS = SearchEngine("Swisscows", "https://swisscows.com/en/web", private=True, field="query")
 WAYBACK_MACHINE = SearchEngine("The Wayback Machine", "https://web.archive.org/web/", escape=False)
 YAHOO = SearchEngine("Yahoo!", "https://{lang}.search.yahoo.com/search")
-YOUTUBE = SearchEngine("YouTube", "https://www.youtube.com/results", field="search_query")
+YOUTUBE = SearchEngine("YouTube", "https://www.youtube.com/results", aliases=["yt", "ytb"], field="search_query")

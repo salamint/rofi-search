@@ -1,11 +1,10 @@
-import pprint
 import tomllib
 from argparse import Namespace
 from pathlib import Path
 from typing import Any, Callable, Optional
 
-from browser import Browser
-from search_engine import SearchEngine
+from entries.browser import Browser
+from entries.search_engine import SearchEngine
 
 from .config import Configuration
 from .location import ConfigLocation
@@ -94,10 +93,12 @@ class GlobalConfigParser(ConfigParser):
                 "show": args.show_search_engines
             },
             "customization": {
+                "aliases_color": args.aliases_color,
                 "kb_browsers": args.kb_browsers,
                 "kb_change_language": args.kb_change_language,
                 "kb_search_engines": args.kb_search_engines,
                 "kb_toggle_private_search": args.kb_toggle_private_search,
+                "rofi_config": args.rofi_config,
                 "width": args.width
             }
         }
@@ -146,8 +147,11 @@ class GlobalConfigParser(ConfigParser):
             else:
                 base = None
             Browser(
-                name,
-                arguments=settings["arguments"],
+                settings["name"],
+                executable=settings["executable"],
+                aliases=settings.get("aliases"),
+                arguments=settings.get("arguments", []),
+                private_arguments=settings.get("private_arguments", []),
                 private=settings.get("private", False),
                 base=base
             )
@@ -156,8 +160,9 @@ class GlobalConfigParser(ConfigParser):
     def load_custom_search_engines(self, custom_search_engines_section: dict[str, dict[str, Any]]):
         for name, settings in custom_search_engines_section.items():
             SearchEngine(
-                name,
+                settings["name"],
                 url=settings["url"],
+                aliases=settings.get("aliases"),
                 private=settings.get("private", False),
                 escape=settings.get("escape", False)
             )
@@ -271,6 +276,10 @@ class SearchEnginesConfigParser(ConfigParser):
 @section_parser("customization")
 class CustomizationConfigParser(ConfigParser):
 
+    @setting_parser("aliases_color", str)
+    def load_aliases_color(self, aliases_color: str):
+        self.config.aliases_color = aliases_color
+
     @setting_parser("kb_browsers", str)
     def load_kb_browsers(self, kb_browsers: str):
         self.config.kb_browsers = kb_browsers
@@ -286,6 +295,10 @@ class CustomizationConfigParser(ConfigParser):
     @setting_parser("kb_toggle_private_search", str)
     def load_kb_toggle_private_search(self, kb_toggle_private_search: str):
         self.config.kb_toggle_private = kb_toggle_private_search
+
+    @setting_parser("rofi_config", str)
+    def load_rofi_config(self, rofi_config: str):
+        self.config.rofi_config = rofi_config
 
     @setting_parser("width", int)
     def load_width(self, width: int):
