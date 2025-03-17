@@ -67,6 +67,8 @@ class GlobalConfigParser(ConfigParser):
         if config.has_loaded(file):
             return None
 
+        if config.debug:
+            print("Parsing configuration:", file)
         with location.get_config_file().open("rb") as f:
             data = tomllib.load(f)
             return cls(config, data)

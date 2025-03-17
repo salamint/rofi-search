@@ -58,6 +58,7 @@ browser.add_argument(
 browser.add_argument(
     "--private-browsers-only", "--private-browsers", "-B",
     action="store_true",
+    default=None,
     help="Filters to show only browsers that respects your privacy."
 )
 browser.add_argument(
@@ -95,6 +96,7 @@ search_engine.add_argument(
 search_engine.add_argument(
     "--private-search-engine-only", "--private-search-engines", "-S",
     action="store_true",
+    default=None,
     help="Filters to show only search engines that respects your privacy."
 )
 search_engine.add_argument(

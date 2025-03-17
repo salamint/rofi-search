@@ -4,14 +4,6 @@ from typing import Optional
 
 class ConfigLocation:
 
-    standard_locations: list['ConfigLocation'] = []
-
-    @classmethod
-    def get_user_config(cls) -> Optional['ConfigLocation']:
-        for location in cls.standard_locations:
-            if location.is_valid():
-                return location
-
     def __init__(self, path: Path):
         self.path = path.resolve()
 
@@ -51,6 +43,19 @@ APP_XDG_CONFIG_DIR = XDG_CONFIG_DIR / "rofi-search/"
 APP_XDG_CONFIG_FILE = XDG_CONFIG_DIR / "rofi-search.toml"
 APP_DOT_DIR = HOME_DIR / ".rofi-search/"
 APP_DOT_FILE = HOME_DIR / ".rofi-search.toml"
+
+STANDARD_LOCATIONS: list['ConfigLocation'] = [
+    ConfigLocation(APP_XDG_CONFIG_DIR),
+    ConfigLocation(APP_XDG_CONFIG_FILE),
+    ConfigLocation(APP_DOT_DIR),
+    ConfigLocation(APP_DOT_FILE),
+]
+
+
+def get_user_config() -> Optional['ConfigLocation']:
+    for location in STANDARD_LOCATIONS:
+        if location.is_valid():
+            return location
 
 
 class ConfigurationLocationException(Exception):

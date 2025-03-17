@@ -124,16 +124,16 @@ class BrowserConfiguration:
         if not browser.is_installed():
             return False
 
-        if browser in self.show:
+        if browser in self.show or browser in self.preferred:
             return True
         elif browser in self.hide:
             return False
 
-        if not browser.is_private() and self.private_only:
+        if self.private_only and not browser.is_private():
             return False
 
         base = browser.get_base()
-        if base is not None and base in self.show_based_on:
+        if base is None or base in self.show_based_on:
             return True
         elif base is not None and base in self.hide_based_on:
             return False
@@ -172,8 +172,8 @@ class SearchEngineConfiguration:
             return True
         elif search_engine in self.hide:
             return False
-        elif self.private_only:
-            return search_engine.is_private()
+        elif self.private_only and not search_engine.is_private():
+            return False
         return True
 
     def get_search_engine(self, browser: Optional['Browser'] = None) -> 'SearchEngine':

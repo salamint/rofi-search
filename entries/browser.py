@@ -87,10 +87,10 @@ class Browser(Entry):
         return self.private
 
     def is_installed(self) -> bool:
-        return which(self.get_name()) is not None
+        return which(self.get_executable()) is not None
 
     def get_command(self, url: str, private: bool = False) -> list[str]:
-        command = [self.get_name()]
+        command = [self.get_executable()]
         command.extend(self.get_arguments())
         if private:
             command.extend(self.private_arguments)

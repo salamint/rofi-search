@@ -11,7 +11,7 @@ from subprocess import CompletedProcess
 from typing import Optional, Iterable
 
 from cli import arguments
-from config import Configuration, ConfigLocation, GlobalConfigParser, APP_XDG_CONFIG_DIR, APP_DOT_DIR, XDG_CONFIG_DIR
+from config import Configuration, ConfigLocation, GlobalConfigParser, APP_XDG_CONFIG_DIR, APP_DOT_DIR, XDG_CONFIG_DIR, get_user_config
 
 DEFAULT_ENCODING = "utf-8"
 FLAG = object()
@@ -47,7 +47,6 @@ def spawn_rofi(*options, flags: Optional[set[str]] = None, _debug: bool = False,
             command.append(str(v))
     stdin = "\n".join(options).encode(DEFAULT_ENCODING)
     if _debug:
-        print("STDIN:", stdin)
         print(subprocess.list2cmdline(command))
     return subprocess.run(command, capture_output=True, input=stdin)
 
@@ -185,13 +184,15 @@ class Application:
 
 
 def print_browsers(config: 'Configuration') -> 'ExitCode':
-    column_string = "{:15}{:16}{:14}{}"
-    print(column_string.format("BROWSER", "SEARCH-ENGINE", "IS-PRIVATE", "BASE"))
+    column_string = "{:15}{:15}{:16}{:14}{}"
+    print(column_string.format("BROWSER", "EXECUTABLE", "SEARCH-ENGINE", "IS-PRIVATE", "BASE"))
     for browser in config.browsers.get_all():
         print(column_string.format(
             browser.get_name(),
+            browser.get_executable(),
             "none" if browser.get_search_engine() is None else browser.get_search_engine().get_name(),
             "yes" if browser.is_private() else "no",
+            "yes" if browser.is_installed() else "no",
             browser.get_base().get_name() if browser.get_base() is not None else "none"
         ))
     return ExitCode.SUCCESS
@@ -234,7 +235,7 @@ def load_config(args: 'Namespace') -> 'Configuration':
     config = Configuration(debug=args.debug)
 
     # Load user configuration
-    user_config = ConfigLocation.get_user_config()
+    user_config = get_user_config()
     if user_config is not None:
         GlobalConfigParser.from_location(config, user_config).load()
 
