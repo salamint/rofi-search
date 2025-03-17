@@ -12,6 +12,7 @@ from typing import Optional, Iterable
 
 from cli import arguments
 from config import Configuration, ConfigLocation, GlobalConfigParser, APP_XDG_CONFIG_DIR, APP_DOT_DIR, XDG_CONFIG_DIR, get_user_config
+from entries.search_engine import SearchEngine
 
 DEFAULT_ENCODING = "utf-8"
 FLAG = object()
@@ -201,9 +202,9 @@ def print_browsers(config: 'Configuration') -> 'ExitCode':
 def print_search_engines(config: 'Configuration') -> 'ExitCode':
     column_string = "{:20}{:14}{}"
     print(column_string.format("SEARCH-ENGINE", "IS-PRIVATE", "URL"))
-    for search_engine in config.search_engines.get_all():
+    for name, search_engine in SearchEngine.all.items():
         print(column_string.format(
-            search_engine.get_name(),
+            name,
             "yes" if search_engine.is_private() else "no",
             search_engine.get_url()
         ))
