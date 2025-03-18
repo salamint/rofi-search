@@ -107,5 +107,6 @@ width = 50
 #name = "Yahoo!"                                # Display name.
 #aliases = ["yh", "yah"]                        # List of aliases to simplify search.
 #url = "https://{lang}.search.yahoo.com/search" # URL to use for the search engine. The search is a GET request.
+#field = "query"                                # Name of the field query to use for the search engine.
 #private = false                                # Tag the search engine as private, i.e. respects your privacy.
 #escape = true                                  # If the search engine needs to escape the terms or not (e.g. The Wayback Machine)

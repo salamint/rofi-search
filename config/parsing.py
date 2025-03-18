@@ -166,6 +166,7 @@ class GlobalConfigParser(ConfigParser):
                 url=settings["url"],
                 aliases=settings.get("aliases"),
                 private=settings.get("private", False),
+                field=settings.get("field"),
                 escape=settings.get("escape", False)
             )
 
